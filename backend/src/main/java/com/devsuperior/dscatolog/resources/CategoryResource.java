@@ -4,12 +4,12 @@ import com.devsuperior.dscatolog.dto.CategoryDTO;
 import com.devsuperior.dscatolog.entities.Category;
 import com.devsuperior.dscatolog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +30,16 @@ public class CategoryResource {
     public ResponseEntity<CategoryDTO> findCategoryById(@PathVariable Long id) {
 
         CategoryDTO categoryDTO = categoryService.findCategoryById(id);
-
         return ResponseEntity.ok().body(categoryDTO);
+    }
+
+    @PostMapping
+    public ResponseEntity<CategoryDTO> insert(@RequestBody CategoryDTO dto) {
+
+        CategoryDTO response = categoryService.insertCategory(dto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(response.getId()).toUri();
+        return ResponseEntity.created(uri).body(response);
     }
 
 }
